@@ -1,0 +1,40 @@
+# Ignore Python virtual environments
+.venv/
+
+GRPO*/
+
+# Ignore Python bytecode files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore logs and environment files
+*.log
+.env
+.env.local
+.DS_Store  # macOS metadata file
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore build and distribution files
+build/
+dist/
+*.egg-info/
+
+# Ignore IDE and editor settings
+.vscode/
+.idea/
+*.swp  # Vim swap files
+*.sublime-workspace
+
+# Ignore coverage and test reports
+.coverage
+htmlcov/
+pytest_cache/
+nosetests.xml
+coverage.xml
+
+# Ignore Docker & CI/CD files (optional)
+docker-compose.override.yml
