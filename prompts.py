@@ -65,7 +65,7 @@ map_example_prompt = """
     The colons (:) signal that the taxi can cross-over. Walls cannot be crossed-over.
     
     ### Example Map:\n
-    +---------+, |Taxi (empty): | : :Passenger waiting|, | : | : : |, | : : : : |, | | : | : |, |destination| : | : |, +---------+
+    +---------+, | :Taxi (empty)| : :Passenger waiting|, | : | : : |, | : : : : |, | | : | : |, |destination| : | : |, +---------+
     
     #### Explanation:\n
     - `+---------+` represents the **top and bottom walls** of the grid.  
@@ -74,7 +74,7 @@ map_example_prompt = """
         - The **taxi** and the **passenger** are in the first row (**top row**).  
         - The **destination** is in the **bottom row**.  
         - The **taxi is empty**. 
-        - The **passenger** cannot move east (right) as there is a wall "|". But he can move left (west) due to the colon ":".
+        - The **taxi** cannot move east (right) as there is a wall "|". But the taxi can move left (west) due to the colon ":" or it can move south (down).
     - Furthermore: 
         - "Passenger waiting:Taxi (empty):" means that the taxi is to the right to the passenger and the taxi should move west (left)
         - "|Taxi (empty) Passenger waiting:" means the empty taxi and the passenger are at the same location and the taxis should pick-up the passenger.
