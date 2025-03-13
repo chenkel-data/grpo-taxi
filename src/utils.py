@@ -49,6 +49,10 @@ def load_dataset(file_path):
 
 
 def set_up_logger():
+
+    if not os.path.exists('logs'):
+        os.makedirs('logs')
+
     # Remove all handlers associated with the root logger object.
     for handler in logging.root.handlers[:]:
         logging.root.removeHandler(handler)
