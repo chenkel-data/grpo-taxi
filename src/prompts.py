@@ -13,8 +13,8 @@ base_prompt = """
 
 
     ### Strategy Guidelines \n
-    - As the actions for pick up and drop off are special actions and only required excatly once each, avoid to frequently applying these 2 special actions. 
-    - Only apply the actions for pick up and drop off only when possible and necessary i.e. the taxi is on the same location as the passenger or at the destination location.
+    - Since the pickup and drop-off actions are special and required exactly once each, avoid applying them too frequently.
+    - Only apply the pick-up and drop-off actions when possible and necessary, i.e., when the taxi is at the same location as the passenger or at the destination.
     
 
     ### Map:\n
@@ -38,13 +38,12 @@ base_prompt = """
     - Analyze the game state from the provided state and determine the optimal move.
     - Provide your response in a format as follows:\n\n
 
-    <think><reasoning steps explaining why the action was chosen to reach the goal. Keep the reasoning precise and short.></think>
+    <think><Reasoning steps explaining the choice of action to reach the goal. Keep the reasoning precise and short.></think>
     <answer>integer</answer>
 
     Ensure that:\n
-    - The 'answer' field contains solely a single integer for one of the 6 valid actions in range 0 to 5 and not any text or multiple integers.\n
+    - The 'answer' field contains only a single integer, representing one of the 6 valid actions in the range 0 to 5, without any text or multiple integers.\n
     - The 'think' field provides a brief explanation (few words) of why the action is the best choice.\n
-
 
     """
 
@@ -76,8 +75,8 @@ map_example_prompt = """
         - The **taxi is empty**. 
         - The **taxi** cannot move east (right) as there is a wall "|". But the taxi can move left (west) due to the colon ":" or it can move south (down).
     - Furthermore: 
-        - "Passenger waiting:Taxi (empty):" means that the taxi is to the right to the passenger and the taxi should move west (left)
-        - "|Taxi (empty) Passenger waiting:" means the empty taxi and the passenger are at the same location and the taxis should pick-up the passenger.
+        - "Passenger waiting:Taxi (empty):" means that the taxi is to the right of the passenger, so the taxi should move west (left).
+        - "|Taxi (empty) Passenger waiting:" means the empty taxi and the passenger are at the same location, so the taxi should pick up the passenger.
         
     ### Actions:\n
     0: Move south
@@ -94,11 +93,11 @@ map_example_prompt = """
     - Analyze the game state from the provided state and determine the optimal move.
     - Provide your response in a format as follows:\n\n
 
-    <think><reasoning steps explaining why the action was chosen to reach the goal. Keep the reasoning precise and short.></think>
+    <think><Reasoning steps explaining the choice of action to reach the goal. Keep the reasoning precise and short.></think>
     <answer>integer</answer>
 
     Ensure that:\n
-    - The 'answer' field contains solely a single integer for one of the 6 valid actions in range 0 to 5 and not any text or multiple integers.\n
+    - The 'answer' field contains only a single integer, representing one of the 6 valid actions in the range 0 to 5, without any text or multiple integers.\n
     - The 'think' field provides a brief explanation (few words) of why the action is the best choice.\n
 
     """

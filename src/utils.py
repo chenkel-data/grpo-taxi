@@ -1,4 +1,4 @@
-import os 
+import os
 import pandas as pd
 from datasets import Dataset
 import logging
@@ -7,6 +7,9 @@ from trl import GRPOConfig
 from gymnasium.envs.toy_text.utils import categorical_sample
 
 LOCS = [(0, 0), (0, 4), (4, 0), (4, 3)]  # These are the R, G, Y, B locations
+
+LOG_FILE = "logs/grpo_taxi.log"
+
 
 def step(env, state, a):
     """step function adapted from taxi.py"""
@@ -17,6 +20,7 @@ def step(env, state, a):
     env.s = s
     env.lastaction = a
     return int(s), r, t, False, None
+
 
 def decode(i):
     """decode state from integer (taken from taxi.py)"""
@@ -31,9 +35,10 @@ def decode(i):
     assert 0 <= i < 5
     return list(reversed(out))
 
-def load_dataset():
+
+def load_dataset(file_path):
     """Load the dataset"""
-    df = pd.read_csv("data/states.csv")
+    df = pd.read_csv(file_path)
     dataset = Dataset.from_pandas(df)
     split_dataset = dataset.train_test_split(test_size=0.1, seed=42)
 
@@ -41,6 +46,7 @@ def load_dataset():
     test_dataset = split_dataset["test"]
 
     return train_dataset, test_dataset
+
 
 def set_up_logger():
     # Remove all handlers associated with the root logger object.
@@ -52,7 +58,7 @@ def set_up_logger():
         level=logging.DEBUG,  # Set logging level
         format="%(asctime)s - %(levelname)s - %(message)s",  # Log format
         handlers=[
-            logging.FileHandler("grpo_taxi.log", mode="a",
+            logging.FileHandler(LOG_FILE, mode="a",
                                 encoding="utf-8"),  # Log to file
             logging.StreamHandler()  # Log to console
         ]
@@ -62,8 +68,9 @@ def set_up_logger():
 
     return logger
 
+
 def get_checkpoint(training_args: GRPOConfig):
     last_checkpoint = None
-    if os.path.isdir(training_args.output_dir):
+    if os.path.isdir(training_args.output_dir) and training_args.resume_from_checkpoint:
         last_checkpoint = get_last_checkpoint(training_args.output_dir)
     return last_checkpoint
