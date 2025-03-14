@@ -7,25 +7,44 @@ Our goal is to test GRPO on a relatively small LLM to determine whether we can f
 
 For this we leverage the [taxi environment](https://gymnasium.farama.org/environments/toy_text/taxi/) from gymnasium.
 
+# The Game
+
+![](assets/taxi-map.png) 
+
+The game is about the taxi navigating to the passenger in a grid world, picking them up, and drive to the destination while avoiding obstacles and dropping them off.
+
+The taxi can take in each time step the following actions:
+
+``` 
+0: Move south
+1: Move north
+2: Move east
+3: Move west
+4: Pick up passenger
+5: Drop off passenger
+```
 
 # Data
-We create a small dataset of approximately 300 state examples from the taxi simulation environment to serve as input for fine-tuning. This dataset does not include any supervised (reasoning) examples typically used in RLHF to train in a supervised manner reasoning on examples.
+We create a small dataset of approximately 300 state examples from the taxi simulation environment to serve as input for fine-tuning. This dataset does not include any supervised (reasoning) examples typically used to train reasoning in a supervised manner.
 
-We used the Gym environment with `render_mode="ansi"` and convert output of each state into a human-readable string. Although the Gym environment also provides state outputs in the form of images, our goal is to test GRPO on a text-based LLM rather than a multimodal one—at least for now.
+We used the Gym environment with `render_mode="ansi"` (which gives us colorized terminal codes) and convert the output of each state into a human-readable string. Although the Gym environment also provides state outputs in the form of images, our goal is to test GRPO on a text-based LLM rather than a multimodal one—at least for now.
 
+The game world consists of a 5x5 grid enclosed by a border of + and - characters. The taxi, passenger, and destinations are placed in specific locations, and walls (|) restrict movement. 
+The colons (:) signal that the taxi can cross-over. Walls cannot be crossed-over.
+    
 **Example state**:
 
 ```
 161,"+---------+, |Passenger waiting: | : :destination|, | : | :Taxi (empty): |, | : : : : |, | | : | : |, | | : | : |, +---------+"
 ```
-This state has ID 161 (given from the environment).
+This state has ID 161 (given by the environment).
 
 This state describes:
-* Passenger and destination are in the 1. row.
+* Passenger (waiting) and destination at the 1. row.
 * Taxi is in the 2. row
 * For this state, the target is to pick up the passenger in the 1. row. Then drop him off at the destination. This requires moving down again due to the wall in between (the |).
 
-Refer to the prompt examples in `prompts.py` for more details on the map structure and game mechanics.
+Refer to the prompt examples in `prompts.py` and the [documentation](https://gymnasium.farama.org/environments/toy_text/taxi/) for more details on the map structure and game mechanics.
 
 # Reward functions
 
@@ -92,7 +111,7 @@ GRPOConfig(
 
 ## Experiment results tensorboard
 
-![Project Logo](assets/tensorboard_results.png)
+![](assets/tensorboard_results.png)
 
 
 
@@ -268,7 +287,7 @@ The agent fails to recognize that the taxi is already carrying the passenger and
   
 * Initially, I tested the smaller distilled DeepSeek models, up to 14B, but the early results were not promising. The distilled versions are merely base models, not instruction-tuned, making it difficult for them to learn even the structured format. As a result, significantly longer training would be required. It would be interesting to compare these with math-instruct models like `Qwen2.5-Math-Instruct`. The Qwen instruct models showed the most promise, which is why I chose them for these experiments.
 
-* There is still no free lunch—simply designing a simple reward function is not enough. DeepSeek achieved their "AHA moment" by leveraging massive amounts of data, a highly capable base model, and extensive compute resources, with significantly longer training times (around 8,000 steps).
+* There is still no free lunch—simply designing a simple reward function is not enough. DeepSeek achieved their "aha moment" by leveraging massive amounts of data, a highly capable base model, and extensive compute resources, with significantly longer training times (around 8,000 steps).
 
 * Achieving similar results with smaller models requires more careful reward function engineering (and possibly prompt engineering) to prevent reward hacking and improve reasoning capabilities.
 
@@ -281,9 +300,14 @@ The agent fails to recognize that the taxi is already carrying the passenger and
   
 * Initial tests with a more detailed prompt containing a single example of the map showed even worse results, as the LLM consistently adhered to the example. This suggests that a zero-shot prompt is more suitable.
 
-* We use a short response length (128 tokens), which may be too limited for the model to develop proper reasoning. In the paper, the LLM is allowed to generate outputs of up to 12,000 tokens (Figure 3 in the paper). A longer response length might be necessary for effective reasoning. They also found that the "AHA moment" requires a sufficient number of tokens, allowing the model to allocate more thinking time on the problem by reevaluating its approach.
+* We use a short response length (128 tokens), which may be too limited for the model to develop proper reasoning. In the paper, the LLM is allowed to generate outputs of up to 12,000 tokens (Figure 3 in the paper). A longer response length might be necessary for effective reasoning. They also found that the "aha moment" requires a sufficient number of tokens, allowing the model to allocate more thinking time on the problem by reevaluating its approach.
 
 
 ## How can you contribute?
 
-We could explore reasoning for other environments offered by gymnasium, or leverage them to generate new kind of data / benchmarks for better reasoning models.
+Reasoning in other environments offered by gymnasium could be explored, or leverage them to generate new kind of reasoning data / benchmarks for better reasoning models.
+
+# References & Acknowledgments
+
+* [Open-R1](https://github.com/huggingface/open-r1) - Fully open reproduction of DeepSeek-R1
+
